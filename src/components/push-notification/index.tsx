@@ -16,12 +16,12 @@ export const PushNotification:React.FC<{}> = () => {
     const { pageAttributes: { isAuthenticating } } = useSelector(selectPushAuth); 
 
     return (
-        <Card>
+        <Card sx={{ margin: '10px' }}>
             <CardContent>
                 <Typography variant='h3'>Authenticate</Typography>
                 {isAuthenticating && <CircularProgress /> }
                 <Typography variant='body1'>
-                    {isAuthenticated ? 'Authenticated' : 'Sent push notification'}
+                    {isAuthenticated ? 'Authenticated' : 'Not Authenticated'}
                 </Typography>
             </CardContent>
             <CardActions>

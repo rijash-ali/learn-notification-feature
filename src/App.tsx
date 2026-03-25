@@ -4,6 +4,8 @@ import './App.css';
 import { PushNotification } from './components/push-notification';
 import { Provider } from 'react-redux';
 import { store } from './store';
+import { PushAuthWithHook } from './components/push-auth-with-hook';
+import { Divider } from '@mui/material';
 
 function App() {
   // return (
@@ -29,6 +31,8 @@ function App() {
     <div>
       <Provider store={store}>
         <PushNotification />
+        <Divider orientation='horizontal' sx={{ margin: '10px' }} />
+        <PushAuthWithHook />
       </Provider>
     </div>
   );
