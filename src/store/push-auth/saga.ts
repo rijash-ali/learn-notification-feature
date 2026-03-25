@@ -17,6 +17,7 @@ function* invokeAuth() {
         });
 
         if(timeout) {
+            console.log('@test - hits timeout')
             yield put(pushAuthActions.challengeTimeout());
             return;
         }
@@ -38,6 +39,7 @@ function* invokeAuth() {
 
 function* pollChallengeStatus(id: string) {
     while(true) {
+        console.log('@test - Polling initiated');
         // @ts-ignore
         const result = yield call(checkChallengeStatus, id);
 

@@ -8,14 +8,17 @@ export const requestChallenge = async (): Promise<{ status: number; data: string
 
 
 export const checkChallengeStatus = async () => {
+  console.log('@test - checkChallengeStatus invoked');
   return new Promise(resolve => {
     setTimeout(() => {
+      const randomChanceVar = (Math.random() * 10) % 4;
+      const authStatus = randomChanceVar > 2 ? "pending" : randomChanceVar > 1 ? "approved" : "rejected";
       resolve({
         status: 200,
         data: {
-          status: Math.random() > 0.5 ? "approved" : "rejected"
+          status: authStatus
         }
       });
-    }, 10000);
+    }, 1000);
   });
 };
