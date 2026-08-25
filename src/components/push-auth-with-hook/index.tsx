@@ -1,12 +1,17 @@
 import { Card, CardContent, Typography, CircularProgress, CardActions, Button } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 import { usePushAuthRunner } from '../../hooks/pushAuthHook';
-import { checkChallengeStatus } from '../../service/authService';
+import { checkChallengeStatus, requestChallenge } from '../../service/authService';
+import { useQuery } from '@tanstack/react-query';
 
 export const PushAuthWithHook: React.FC<{}> = () => {
     const [status, setStatus] = useState("idle");
 
     const authRunner = usePushAuthRunner();
+
+    const query = useQuery({ queryKey: ['test'], queryFn: requestChallenge, enabled: false });
+
+    const { data, error, isPending, isError, isLoading } = query;
 
     const handleAuth = useCallback(() => {
         setStatus("pending");
@@ -29,9 +34,11 @@ export const PushAuthWithHook: React.FC<{}> = () => {
                 <Typography variant='body1'>
                     {status === "approved" ? 'Authenticated' : 'Not Authenticated'}
                 </Typography>
+                <Typography>{data?.data || 'Not processed'}</Typography>
             </CardContent>
             <CardActions>
                 <Button onClick={handleAuth}>Send Push notification</Button>
+                <Button onClick={_ => query.refetch()}>Query Challenge</Button>
             </CardActions>
         </Card>
     );

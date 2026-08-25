@@ -6,6 +6,7 @@ import { Provider } from 'react-redux';
 import { store } from './store';
 import { PushAuthWithHook } from './components/push-auth-with-hook';
 import { Divider } from '@mui/material';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 function App() {
   // return (
@@ -27,13 +28,17 @@ function App() {
   //   </div>
   // );
 
+  const queryClient = new QueryClient();
+
   return (
     <div>
-      <Provider store={store}>
-        <PushNotification />
-        <Divider orientation='horizontal' sx={{ margin: '10px' }} />
-        <PushAuthWithHook />
-      </Provider>
+      <QueryClientProvider client={queryClient}>
+        <Provider store={store}>
+          <PushNotification />
+          <Divider orientation='horizontal' sx={{ margin: '10px' }} />
+          <PushAuthWithHook />
+        </Provider>
+      </QueryClientProvider>
     </div>
   );
 }
