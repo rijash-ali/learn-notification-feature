@@ -44,3 +44,15 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
+
+## Local MCP Server
+
+Run the bundled Model Context Protocol (MCP) server which exposes a tool named `describe_react_packages`.
+
+Start the server:
+
+```bash
+npm run mcp-server
+```
+
+The server communicates over stdio and responds to `describe_react_packages` calls by returning a summary of runtime and dev dependencies for this project.
