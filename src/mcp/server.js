@@ -47,8 +47,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   return {
     content: [
       {
-        type: 'text',
-        text: result.summary
+          type: 'text',
+          text: typeof result === 'string' ? result : JSON.stringify(result, null, 2)
       }
     ],
     structuredContent: result
@@ -58,7 +58,9 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error('React package analyzer MCP server running');
+  console.info('React package analyzer MCP server running');
+
+  // console.log(inspectCurrentProject(process.cwd()));
 }
 
 main().catch((error) => {

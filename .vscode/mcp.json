@@ -13,7 +13,7 @@
 		},
 		"describe_react_packages": {
 			"command": "node",
-			"args": ["./src/mcp/server.js"],
+			"args": ["src/mcp/server.js"],
 			"type": "stdio"
 		}
 	},

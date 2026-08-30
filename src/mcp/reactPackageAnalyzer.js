@@ -29,11 +29,13 @@ function readPackageJson(projectRoot = process.cwd()) {
 
 function inspectCurrentProject(projectRoot = process.cwd()) {
   const packageJson = readPackageJson(projectRoot);
-  return {
+  const base = {
     name: packageJson.name || path.basename(projectRoot),
     summary: formatPackageSummary(packageJson),
-    analysis: analyzePackageDependencies(packageJson)
+    analysis: analyzePackageDependencies(packageJson),
+    inventory: buildInventory(projectRoot, packageJson)
   };
+  return base;
 }
 
 function findPackageUsage(projectRoot = process.cwd(), packageName) {
@@ -86,6 +88,53 @@ function inspectCurrentProjectWithPackage(projectRoot = process.cwd(), packageNa
     base.summary += '\n\n' + `Usage for package '${packageName}': ${usage.totalMatches} matches in ${usage.totalFiles} files`;
   }
   return base;
+}
+
+function readJSONSync(p) {
+  try {
+    const raw = fs.readFileSync(p, 'utf8');
+    return JSON.parse(raw);
+  } catch (e) {
+    return null;
+  }
+}
+
+function isTreeShakable(projectRoot, packageName) {
+  // try to read node_modules/<package>/package.json and inspect fields
+  const pkgPath = path.join(projectRoot, 'node_modules', ...packageName.split('/'), 'package.json');
+  const pkg = readJSONSync(pkgPath);
+  if (!pkg) return false;
+  if (typeof pkg.sideEffects !== 'undefined') return pkg.sideEffects === false;
+  if (pkg.module || pkg['jsnext:main']) return true;
+  return false;
+}
+
+function buildInventory(projectRoot, packageJson) {
+  const deps = Object.assign({}, packageJson.dependencies || {}, packageJson.devDependencies || {});
+  const suggestions = {
+    lodash: ['ramda', 'underscore'],
+    react: ['preact'],
+    axios: ['fetch']
+  };
+
+  const inventory = [];
+  for (const [name, version] of Object.entries(deps)) {
+    const usage = findPackageUsage(projectRoot, name);
+    const usedIn = usage.files.map(f => f.file).sort();
+    const importCount = usage.totalMatches || 0;
+    const dup = suggestions[name] || [];
+    const tree = isTreeShakable(projectRoot, name);
+    inventory.push({
+      package: name,
+      version,
+      usedIn,
+      importCount,
+      duplicateAlternatives: dup,
+      treeShakable: tree
+    });
+  }
+
+  return inventory.sort((a, b) => a.package.localeCompare(b.package));
 }
 
 module.exports = {
